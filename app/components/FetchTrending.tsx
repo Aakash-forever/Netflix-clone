@@ -1,9 +1,9 @@
-import { fetchTrending } from "@/lib/tmdb";
 import MovieRow from "./MovieRow";
+import { fetchTrending, type Movie } from "@/lib/tmdb";
 
-export default async function FetchTrending() {
+export default async function FetchTrending(): Promise<JSX.Element> {
   const trending = await fetchTrending();
-  const movies = trending?.results ?? [];
+  const movies: Movie[] = trending?.results ?? [];
 
   return (
     <section>

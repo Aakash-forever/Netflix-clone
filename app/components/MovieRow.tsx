@@ -1,12 +1,20 @@
 import Image from "next/image";
+import type { Movie } from "@/lib/tmdb";
 
 const IMG_BASE = "https://image.tmdb.org/t/p/w500";
 
-export default function MovieRow({ movies = [] }) {
+type MovieRowProps = {
+  movies?: Movie[];
+};
+
+export default function MovieRow({ movies = [] }: MovieRowProps) {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-      {movies.map(movie => (
-        <div key={movie.id} className="relative aspect-[2/3] rounded overflow-hidden bg-neutral-900">
+      {movies.map((movie) => (
+        <div
+          key={movie.id}
+          className="relative aspect-[2/3] rounded overflow-hidden bg-neutral-900"
+        >
           {movie.poster_path ? (
             <Image
               src={`${IMG_BASE}${movie.poster_path}`}
@@ -17,7 +25,9 @@ export default function MovieRow({ movies = [] }) {
               priority
             />
           ) : (
-            <div className="flex h-full items-center justify-center text-sm text-neutral-400">No poster</div>
+            <div className="flex h-full items-center justify-center text-sm text-neutral-400">
+              No poster
+            </div>
           )}
         </div>
       ))}
