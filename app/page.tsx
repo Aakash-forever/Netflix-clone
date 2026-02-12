@@ -1,9 +1,19 @@
-import FetchTrending from "./components/FetchTrending";
+import AppLayout from "@/components/Layout/AppLayout";
+import HeroBanner from "@/components/Hero/HeroBanner";
+import FetchTrending from "@/components/Sections/FetchTrending";
+import FetchTopRated from "@/components/Sections/FetchTopRated";
+import FetchActionMovies from "@/components/Sections/FetchActionMovie";
+import { getTrendingMovies } from "@/lib/tmdb";
 
-export default function Home() {
+export default async function Home() {
+  const trending = await getTrendingMovies();
+
   return (
-    <main className="p-6">
-      <FetchTrending />
-    </main>
+    <AppLayout>
+      <HeroBanner movies={trending.results} />
+      <FetchTrending movies={trending.results} />
+      <FetchTopRated />
+      <FetchActionMovies />
+    </AppLayout>
   );
 }

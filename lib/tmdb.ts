@@ -1,43 +1,45 @@
-const BASE_URL = "https://api.themoviedb.org/3";
+import axios from "axios";
 
-type Movie = {
+const api = axios.create({
+  baseURL: "https://api.themoviedb.org/3",
+  headers: {
+    Authorization: `Bearer ${process.env.NEXT_PUBLIC_TMDB_TOKEN ?? ""}`,
+    accept: "application/json",
+  },
+});
+
+export type Movie = {
   id: number;
+  backdrop_path?: string | null;
   poster_path?: string | null;
   title?: string | null;
   name?: string | null;
+  overview?: string | null;
+  release_date?: string | null;
+  first_air_date?: string | null;
+  vote_average?: number | null;
 };
 
-type TmdbResponse = {
+export type TmdbResponse = {
   page: number;
   results: Movie[];
   total_pages: number;
   total_results: number;
 };
 
-const options: RequestInit = {
-  headers: {
-    Authorization: `Bearer ${process.env.NEXT_PUBLIC_TMDB_TOKEN ?? ""}`,
-    accept: "application/json",
-  },
-  // Next.js defaults to fetch cache=force-cache for GET; keep default.
+export const getTrendingMovies = async (): Promise<TmdbResponse> => {
+  const { data } = await api.get<TmdbResponse>("/trending/movie/week");
+  return data;
 };
 
-export const fetchTrending = async (): Promise<TmdbResponse> => {
-  const res = await fetch(`${BASE_URL}/trending/movie/week`, options);
-  return (await res.json()) as TmdbResponse;
+export const getTopRatedMovies = async (): Promise<TmdbResponse> => {
+  const { data } = await api.get<TmdbResponse>("/movie/top_rated");
+  return data;
 };
 
-export const fetchTopRated = async (): Promise<TmdbResponse> => {
-  const res = await fetch(`${BASE_URL}/movie/top_rated`, options);
-  return (await res.json()) as TmdbResponse;
+export const getActionMovies = async (): Promise<TmdbResponse> => {
+  const { data } = await api.get<TmdbResponse>("/discover/movie", {
+    params: { with_genres: 28 },
+  });
+  return data;
 };
-
-export const fetchActionMovies = async (): Promise<TmdbResponse> => {
-  const res = await fetch(
-    `${BASE_URL}/discover/movie?with_genres=28`,
-    options
-  );
-  return (await res.json()) as TmdbResponse;
-};
-
-export type { Movie, TmdbResponse };

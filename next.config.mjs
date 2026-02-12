@@ -10,4 +10,4 @@ const nextConfig = {
   },
 };
 
-export default nextConfig; // if using .js; for .mjs use `export default nextConfig;`
+export default nextConfig;
