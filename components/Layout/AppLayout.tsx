@@ -1,11 +1,7 @@
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
 
-export default function AppLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen bg-black text-white">
       <Sidebar />

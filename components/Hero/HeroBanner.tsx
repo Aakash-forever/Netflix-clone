@@ -69,7 +69,7 @@ export default function HeroBanner({ movies = [] }: Props) {
           <button
             key={i}
             onClick={() => setIndex(i)}
-            className={`h-1.5 transition-all duration-300 rounded-full ${i === index ? "w-7 bg-white" : "w-4 bg-white/40"}`}
+            className={`h-0.5 transition-all duration-300 rounded-full ${i === index ? "w-6 bg-red-600" : "w-3 bg-white/40"}`}
           />
         ))}
       </div>
