@@ -1,14 +1,26 @@
 const links = [
-  ["FAQ", "Help Center", "Account", "Media Center"],
-  ["Investor Relations", "Jobs", "Redeem Gift Cards", "Buy Gift Cards"],
-  ["Ways to Watch", "Terms of Use", "Privacy", "Cookie Preferences"],
-  ["Corporate Information", "Contact Us", "Speed Test", "Legal Notices"],
-  ["Only on Netflix"],
+  "FAQ",
+  "Help Center",
+  "Account",
+  "Media Center",
+  "Investor Relations",
+  "Jobs",
+  "Redeem Gift Cards",
+  "Buy Gift Cards",
+  "Ways to Watch",
+  "Terms of Use",
+  "Privacy",
+  "Cookie Preferences",
+  "Corporate Information",
+  "Contact Us",
+  "Speed Test",
+  "Legal Notices",
+  "Only on Netflix",
 ];
 
 export default function Footer() {
   return (
-    <footer className="bg-black px-8 md:px-14 py-10 mt-8 text-sm text-gray-400 border-t border-white/10">
+    <footer className="bg-black px-6 py-8 mt-8 text-sm text-gray-400 border-t border-white/10">
       <div className="mb-6">
         <a href="#" className="hover:underline">
           Questions? Contact us.
@@ -16,8 +28,8 @@ export default function Footer() {
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mb-8">
-        {links.flat().map((label) => (
-          <a key={label} href="#" className="hover:underline">
+        {links.map((label, i) => (
+          <a key={i} href="#" className="hover:underline">
             {label}
           </a>
         ))}
@@ -27,7 +39,7 @@ export default function Footer() {
         English
       </button>
 
-      <div className="mt-4 text-xs text-gray-500">Netflix Clone • 2026</div>
+      <div className="mt-4 text-xs text-gray-500">Netflix Clone 2026</div>
     </footer>
   );
 }

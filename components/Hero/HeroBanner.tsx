@@ -15,19 +15,19 @@ export default function HeroBanner({ movies = [] }: Props) {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    if (slides.length === 0) return;
-    const timer = setInterval(() => {
-      setIndex((prev) => {
-        const next = prev + 1;
-        if (next >= slides.length) return 0;
-        return next;
-      });
-    }, 3000);
-    return () => clearInterval(timer);
-  }, [slides.length]);
+    if (!slides.length) return;
+    const id = setInterval(() => {
+      setIndex((i) => (i + 1) % slides.length);
+    }, 3500);
+    return () => clearInterval(id);
+  }, [slides]);
 
-  if (slides.length === 0) {
-    return null;
+  if (!slides.length) {
+    return (
+      <section className="relative h-[50vh] w-full bg-neutral-900 flex items-center justify-center">
+        <p className="text-gray-400 text-sm">No movies to show</p>
+      </section>
+    );
   }
 
   const movie = slides[index];
@@ -36,7 +36,7 @@ export default function HeroBanner({ movies = [] }: Props) {
 
   return (
     <section className="relative h-[65vh] w-full overflow-hidden bg-neutral-900">
-      {imagePath && (
+      {imagePath ? (
         <Image
           src={`${IMG_BASE}${imagePath}`}
           alt={title}
@@ -45,7 +45,7 @@ export default function HeroBanner({ movies = [] }: Props) {
           sizes="100vw"
           className="object-cover object-top"
         />
-      )}
+      ) : null}
 
       <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent" />
 
@@ -69,7 +69,9 @@ export default function HeroBanner({ movies = [] }: Props) {
           <button
             key={i}
             onClick={() => setIndex(i)}
-            className={`h-0.5 transition-all duration-300 rounded-full ${i === index ? "w-6 bg-red-600" : "w-3 bg-white/40"}`}
+            className={`h-0.5 transition-all duration-300 rounded-full ${
+              i === index ? "w-6 bg-red-600" : "w-3 bg-white/40"
+            }`}
           />
         ))}
       </div>

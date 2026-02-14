@@ -1,23 +1,11 @@
 import axios from "axios";
 
-const api = axios.create({
-  baseURL: "https://api.themoviedb.org/3",
-  headers: {
-    Authorization: `Bearer ${process.env.NEXT_PUBLIC_TMDB_TOKEN ?? ""}`,
-    accept: "application/json",
-  },
-});
-
 export type Movie = {
   id: number;
-  backdrop_path?: string | null;
-  poster_path?: string | null;
   title?: string | null;
   name?: string | null;
-  overview?: string | null;
-  release_date?: string | null;
-  first_air_date?: string | null;
-  vote_average?: number | null;
+  poster_path?: string | null;
+  backdrop_path?: string | null;
 };
 
 export type TmdbResponse = {
@@ -25,6 +13,25 @@ export type TmdbResponse = {
   results: Movie[];
   total_pages: number;
   total_results: number;
+};
+
+const api = axios.create({
+  baseURL: "https://api.themoviedb.org/3",
+  headers: {
+    Authorization: `Bearer ${process.env.NEXT_PUBLIC_TMDB_TOKEN || ""}`,
+    accept: "application/json",
+  },
+});
+
+export const searchMovies = async (query: string): Promise<Movie[]> => {
+  const trimmed = query.trim();
+  if (!trimmed) return [];
+
+  const { data } = await api.get<TmdbResponse>("/search/movie", {
+    params: { query: trimmed, include_adult: false },
+  });
+
+  return data.results;
 };
 
 export const getTrendingMovies = async (): Promise<TmdbResponse> => {

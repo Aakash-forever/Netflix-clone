@@ -1,7 +1,12 @@
+import type { ReactNode } from "react";
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
 
-export default function AppLayout({ children }: { children: React.ReactNode }) {
+type Props = {
+  children: ReactNode;
+};
+
+export default function AppLayout({ children }: Props) {
   return (
     <div className="flex min-h-screen bg-black text-white">
       <Sidebar />

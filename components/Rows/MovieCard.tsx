@@ -3,11 +3,11 @@ import type { Movie } from "@/lib/tmdb";
 
 const IMG_BASE = "https://image.tmdb.org/t/p/w500";
 
-type MovieCardProps = {
+type Props = {
   movie: Movie;
 };
 
-export default function MovieCard({ movie }: MovieCardProps) {
+export default function MovieCard({ movie }: Props) {
   return (
     <div
       className="group relative min-w-[150px] sm:min-w-[180px] md:min-w-[200px]
@@ -20,7 +20,7 @@ export default function MovieCard({ movie }: MovieCardProps) {
         {movie.poster_path ? (
           <Image
             src={`${IMG_BASE}${movie.poster_path}`}
-            alt={movie.title ?? movie.name ?? "Untitled"}
+            alt={movie.title || movie.name || "Untitled"}
             fill
             className="object-cover"
             sizes="200px"
