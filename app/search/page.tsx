@@ -4,7 +4,7 @@ import MovieCard from "@/components/Rows/MovieCard";
 import type { Movie } from "@/lib/tmdb";
 
 export default function SearchPage() {
-  const [term, setTerm] = useState("");
+  const [UserInput, setUserInput] = useState("");
   const [results, setResults] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -12,7 +12,7 @@ export default function SearchPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch(`/api/search?query=${encodeURIComponent(term)}`);
+      const res = await fetch(`/api/search?query=${encodeURIComponent(UserInput)}`);
       const json: Movie[] = await res.json();
       setResults(json || []);
     } catch (err) {
@@ -23,7 +23,7 @@ export default function SearchPage() {
   };
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setTerm(e.target.value);
+    setUserInput(e.target.value);
   };
 
   const resultsWithPosters = results.filter((movie) => movie.poster_path);
@@ -32,7 +32,7 @@ export default function SearchPage() {
     <section className="px-6 md:px-10 mt-6 space-y-10">
       <form onSubmit={onSubmit} className="flex gap-3">
         <input
-          value={term}
+          value={UserInput}
           onChange={onChange}
           placeholder="Search movies..."
           className="flex-1 rounded bg-neutral-900 px-4 py-2"

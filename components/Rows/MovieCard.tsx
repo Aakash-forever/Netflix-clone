@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import type { Movie } from "@/lib/tmdb";
 
@@ -5,18 +7,16 @@ const IMG_BASE = "https://image.tmdb.org/t/p/w500";
 
 type Props = {
   movie: Movie;
+  onSelect?: (movie: Movie) => void;
 };
 
-export default function MovieCard({ movie }: Props) {
+export default function MovieCard({ movie, onSelect }: Props) {
   return (
-    <div
-      className="group relative min-w-[150px] sm:min-w-[180px] md:min-w-[200px]
-                 aspect-[2/3] overflow-visible"
+    <button
+      onClick={() => onSelect?.(movie)}
+      className="group relative min-w-[150px] sm:min-w-[180px] md:min-w-[200px] aspect-[2/3] overflow-visible focus:outline-none"
     >
-      <div
-        className="h-full w-full overflow-hidden bg-neutral-900
-                   transition-transform duration-300 group-hover:scale-110"
-      >
+      <div className="h-full w-full overflow-hidden bg-neutral-900 transition-transform duration-300 group-hover:scale-110">
         {movie.poster_path ? (
           <Image
             src={`${IMG_BASE}${movie.poster_path}`}
@@ -31,6 +31,6 @@ export default function MovieCard({ movie }: Props) {
           </div>
         )}
       </div>
-    </div>
+    </button>
   );
 }
