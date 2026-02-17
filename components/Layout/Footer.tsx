@@ -35,7 +35,10 @@ export default function Footer() {
         ))}
       </div>
 
-      <button className="border border-white/30 px-3 py-1 rounded-sm text-gray-200 hover:border-white">
+      <button
+        title="Change display language"
+        className="border border-white/30 px-3 py-1 rounded-sm text-gray-200 hover:border-white"
+      >
         English
       </button>
 

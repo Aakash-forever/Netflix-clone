@@ -7,7 +7,7 @@ import Image from "next/image";
 
 type Props = {
   movies?: Movie[];
-};
+  };
 
 export default function MovieRow({ movies = [] }: Props) {
   const [selected, setSelected] = useState<Movie | null>(null);
@@ -43,6 +43,7 @@ export default function MovieRow({ movies = [] }: Props) {
         ) : null}
         <button
           onClick={close}
+          title="Close details"
           className="absolute top-3 right-3 rounded-full bg-black/60 px-3 py-1 text-sm"
         >
           ✕
@@ -65,11 +66,15 @@ export default function MovieRow({ movies = [] }: Props) {
         </p>
 
         <div className="flex gap-3 pt-1">
-          <button className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium hover:bg-red-500">
+          <button
+            title={`Watch the trailer for ${selected.title || selected.name || "this title"}`}
+            className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium hover:bg-red-500"
+          >
             Watch Trailer
           </button>
           <button
             onClick={close}
+            title="Close details"
             className="rounded-md border border-white/20 px-4 py-2 text-sm font-medium text-gray-100 hover:border-white/40"
           >
             Close

@@ -14,6 +14,7 @@ export default function MovieCard({ movie, onSelect }: Props) {
   return (
     <button
       onClick={() => onSelect?.(movie)}
+      title={`View details for ${movie.title || movie.name || "this title"}`}
       className="group relative min-w-[150px] sm:min-w-[180px] md:min-w-[200px] aspect-[2/3] overflow-visible focus:outline-none"
     >
       <div className="h-full w-full overflow-hidden bg-neutral-900 transition-transform duration-300 group-hover:scale-110">

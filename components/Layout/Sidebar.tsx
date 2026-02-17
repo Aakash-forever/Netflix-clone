@@ -21,17 +21,19 @@ export default function Sidebar() {
 
       <div className="flex flex-col items-center justify-center flex-1 gap-12 w-full">
         {[
-          { href: "/", Icon: Home },
-          { href: "/search", Icon: Search },
-          { href: "/tv", Icon: Tv },
-          { href: "/movies", Icon: Film },
-          { href: "/mylist", Icon: User },
-        ].map(({ href, Icon }) => {
+          { href: "/", Icon: Home, label: "Home" },
+          { href: "/search", Icon: Search, label: "Search" },
+          { href: "/tv", Icon: Tv, label: "TV Shows" },
+          { href: "/movies", Icon: Film, label: "Movies" },
+          { href: "/mylist", Icon: User, label: "My List" },
+        ].map(({ href, Icon, label }) => {
           const active = isActive(href);
           return (
             <Link
               key={href}
               href={href}
+              title={label}
+              aria-label={label}
               className="group relative flex items-center justify-center w-full px-4 pb-4"
             >
               <span

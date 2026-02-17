@@ -47,7 +47,7 @@ export default function HeroBanner({ movies = [] }: Props) {
         />
       ) : null}
 
-      <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black to-transparent" />
 
       <div className="absolute bottom-16 left-6 right-6 space-y-6">
         <span className="bg-red-600 text-xs px-3 py-1 rounded-full uppercase">
@@ -55,10 +55,16 @@ export default function HeroBanner({ movies = [] }: Props) {
         </span>
         <h1 className="text-3xl md:text-4xl font-bold mt-3">{title}</h1>
         <div className="flex gap-3">
-          <button className="bg-white text-black px-5 py-2 rounded-md cursor-pointer">
+          <button
+            title={`Play ${title}`}
+            className="bg-white text-black px-5 py-2 rounded-md cursor-pointer"
+          >
             Play
           </button>
-          <button className="bg-gray-700 text-white px-5 py-2 rounded-md cursor-pointer">
+          <button
+            title={`Watch the trailer for ${title}`}
+            className="bg-gray-700 text-white px-5 py-2 rounded-md cursor-pointer"
+          >
             Watch Trailer
           </button>
         </div>
@@ -69,6 +75,7 @@ export default function HeroBanner({ movies = [] }: Props) {
           <button
             key={i}
             onClick={() => setIndex(i)}
+            title={`Jump to slide ${i + 1}`}
             className={`h-0.5 transition-all duration-300 rounded-full ${
               i === index ? "w-6 bg-red-600" : "w-3 bg-white/40"
             }`}
