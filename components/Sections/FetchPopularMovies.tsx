@@ -1,4 +1,5 @@
 import MovieRow from "@/components/Rows/MovieRow";
+import Heading from "@/components/UI/Heading";
 import { getPopularMovies } from "@/lib/tmdb";
 
 export default async function FetchPopularMovies() {
@@ -6,7 +7,7 @@ export default async function FetchPopularMovies() {
 
   return (
     <section className="px-6 md:px-10 mt-10">
-      <h2 className="text-2xl md:text-3xl font-semibold mb-4">Popular Movies</h2>
+      <Heading className="mb-4">Popular Movies</Heading>
       <MovieRow movies={popular.results} />
     </section>
   );
