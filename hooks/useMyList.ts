@@ -1,81 +1,75 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { Movie } from "@/lib/tmdb";
 
-const KEY = "my-list";
+const STORAGE_KEY = "my-list";
 
-const read = (): Movie[] => {
+const sameItem = (a: Movie, b: Movie) =>
+  a.id === b.id && a.media_type === b.media_type;
+
+const serialize = (list: Movie[]) => JSON.stringify(list);
+
+const loadList = (): Movie[] => {
   if (typeof window === "undefined") return [];
-  const saved = localStorage.getItem(KEY);
-  if (!saved) return [];
   try {
-    return JSON.parse(saved) as Movie[];
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "[]") as Movie[];
   } catch {
     return [];
   }
 };
 
 export function useMyList() {
-  const [items, setItems] = useState<Movie[]>([]);
-  const [hydrated, setHydrated] = useState(false);
-  const latestJson = useRef("[]");
+  const latestJson = useRef("[]"); // remember last saved JSON
+  const [items, setItems] = useState<Movie[]>(loadList);
+  const [hydrated] = useState(() => typeof window !== "undefined");
 
-  const isSaved = useMemo(
-    () => (movie: Movie) =>
-      items.some(
-        (m) => m.id === movie.id && m.media_type === movie.media_type,
-      ),
-    [items],
-  );
-
-  useEffect(() => {
-    const initial = read();
-    const serialized = JSON.stringify(initial);
-    latestJson.current = serialized;
-    setItems(initial);
-    setHydrated(true);
-  }, []);
-
+  // Persist whenever items change (after hydration)
   useEffect(() => {
     if (!hydrated) return;
-    const serialized = JSON.stringify(items);
-    if (serialized === latestJson.current) return;
-    latestJson.current = serialized;
-    if (typeof window === "undefined") return;
-    localStorage.setItem(KEY, serialized);
+    const nextJson = serialize(items);
+    if (nextJson === latestJson.current) return;
+
+    latestJson.current = nextJson;
+    localStorage.setItem(STORAGE_KEY, nextJson);
     window.dispatchEvent(new CustomEvent("my-list-changed"));
   }, [items, hydrated]);
 
+  // Listen for changes from other tabs or in-app events
   useEffect(() => {
     const sync = () => {
-      const next = read();
-      const serialized = JSON.stringify(next);
-      if (serialized !== latestJson.current) {
-        latestJson.current = serialized;
-        setItems(next);
-        setHydrated(true);
-      }
+      const stored = loadList();
+      const storedJson = serialize(stored);
+      if (storedJson === latestJson.current) return;
+
+      latestJson.current = storedJson;
+      setItems(stored);
+      setHydrated(true);
     };
+
     window.addEventListener("storage", sync);
-    window.addEventListener("my-list-changed", sync as EventListener);
+    window.addEventListener("my-list-changed", sync);
     return () => {
       window.removeEventListener("storage", sync);
-      window.removeEventListener("my-list-changed", sync as EventListener);
+      window.removeEventListener("my-list-changed", sync);
     };
   }, []);
 
-  const toggle = (movie: Movie) =>
-    setItems((prev) => {
-      const exists = prev.some(
-        (m) => m.id === movie.id && m.media_type === movie.media_type,
-      );
-      return exists
-        ? prev.filter(
-            (m) => !(m.id === movie.id && m.media_type === movie.media_type),
-          )
-        : [{ ...movie }, ...prev];
-    });
+  const isSaved = useCallback(
+    (movie: Movie) => items.some((m) => sameItem(m, movie)),
+    [items],
+  );
+
+  const toggle = useCallback(
+    (movie: Movie) =>
+      setItems((prev) => {
+        const exists = prev.some((m) => sameItem(m, movie));
+        return exists
+          ? prev.filter((m) => !sameItem(m, movie))
+          : [{ ...movie }, ...prev];
+      }),
+    [],
+  );
 
   return { items, isSaved, toggle, hydrated };
 }

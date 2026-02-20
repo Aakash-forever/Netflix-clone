@@ -1,11 +1,10 @@
 "use client";
-import { useState, type ChangeEvent } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import MovieCollection from "@/components/Rows/MovieCollection";
-import Heading from "@/components/UI/Heading";
 import type { Movie } from "@/lib/tmdb";
 
 export default function SearchPage() {
-  const [UserInput, setUserInput] = useState("");
+  const [query, setQuery] = useState("");
   const [results, setResults] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -13,7 +12,7 @@ export default function SearchPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch(`/api/search?query=${encodeURIComponent(UserInput)}`);
+      const res = await fetch(`/api/search?query=${encodeURIComponent(query)}`);
       const json: Movie[] = await res.json();
       setResults(json || []);
     } catch (err) {
@@ -23,18 +22,21 @@ export default function SearchPage() {
     }
   };
 
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setUserInput(e.target.value);
+  const onChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setQuery(event.target.value);
   };
 
   const resultsWithPosters = results.filter((movie) => movie.poster_path);
 
   return (
     <section className="px-6 md:px-10 mt-6 space-y-10">
-      <Heading level={1}>Search</Heading>
+      <div>
+        <h1 className="text-4xl md:text-5xl font-black tracking-tight">Search</h1>
+        <p className="text-sm text-gray-400 mt-2">Find any movie by title.</p>
+      </div>
       <form onSubmit={onSubmit} className="flex gap-3">
         <input
-          value={UserInput}
+          value={query}
           onChange={onChange}
           placeholder="Search movies..."
           className="flex-1 rounded bg-neutral-900 px-4 py-2"

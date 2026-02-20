@@ -1,5 +1,4 @@
 import MovieRow from "../Rows/MovieRow";
-import Heading from "../UI/Heading";
 import { getActionMovies } from "@/lib/tmdb";
 
 export default async function FetchActionMovies() {
@@ -7,7 +6,9 @@ export default async function FetchActionMovies() {
 
   return (
     <section className="px-6 md:px-10 mt-10">
-      <Heading className="mb-4">Action Movies</Heading>
+      <h2 className="mb-4 text-3xl md:text-4xl font-bold text-white">
+        Action Movies
+      </h2>
       <MovieRow movies={actionMovies.results} />
     </section>
   );

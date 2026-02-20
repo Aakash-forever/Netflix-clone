@@ -1,5 +1,4 @@
 import MovieRow from "../Rows/MovieRow";
-import Heading from "../UI/Heading";
 import { getTopRatedMovies } from "@/lib/tmdb";
 
 export default async function FetchTopRated() {
@@ -7,7 +6,9 @@ export default async function FetchTopRated() {
 
   return (
     <section className="px-6 md:px-10 mt-10">
-      <Heading className="mb-4">Top Rated</Heading>
+      <h2 className="mb-4 text-3xl md:text-4xl font-bold text-white">
+        Top Rated
+      </h2>
       <MovieRow movies={topRated.results} />
     </section>
   );

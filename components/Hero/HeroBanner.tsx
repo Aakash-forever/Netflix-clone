@@ -3,29 +3,31 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import type { Movie } from "@/lib/tmdb";
-import Heading from "@/components/UI/Heading";
+import MoviePreview from "../Rows/MoviePreview";
 
 const IMG_BASE = "https://image.tmdb.org/t/p/original";
+const SLIDE_DELAY_MS = 3500;
 
 type Props = {
   movies?: Movie[];
 };
 
+const pickTitle = (movie: Movie) => movie.title || movie.name || "Movie";
+const pickImage = (movie: Movie) => movie.backdrop_path || movie.poster_path;
+
 export default function HeroBanner({ movies = [] }: Props) {
   const slides = movies.filter((m) => m.backdrop_path || m.poster_path);
-  const [index, setIndex] = useState(0);
-  const [trailerUrl, setTrailerUrl] = useState<string | null>(null);
-  const [trailerLoading, setTrailerLoading] = useState(false);
-  const [trailerError, setTrailerError] = useState<string | null>(null);
-  const [showTrailer, setShowTrailer] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [previewMovie, setPreviewMovie] = useState<Movie | null>(null);
 
+  // Auto-rotate slides when not showing the preview
   useEffect(() => {
-    if (!slides.length || showTrailer) return;
+    if (!slides.length || previewMovie) return;
     const id = setInterval(() => {
-      setIndex((i) => (i + 1) % slides.length);
-    }, 3500);
+      setActiveIndex((i) => (i + 1) % slides.length);
+    }, SLIDE_DELAY_MS);
     return () => clearInterval(id);
-  }, [slides, showTrailer]);
+  }, [slides, previewMovie]);
 
   if (!slides.length) {
     return (
@@ -35,37 +37,9 @@ export default function HeroBanner({ movies = [] }: Props) {
     );
   }
 
-  const movie = slides[index];
-  const title = movie.title || movie.name || "Movie";
-  const imagePath = movie.backdrop_path || movie.poster_path;
-  const isTv =
-    movie.media_type === "tv" ||
-    (!!movie.first_air_date && !movie.title && movie.media_type !== "movie");
-
-  const fetchTrailer = async () => {
-    if (!movie?.id) return;
-    setTrailerLoading(true);
-    setTrailerError(null);
-    setShowTrailer(true);
-    try {
-      const res = await fetch(
-        `/api/trailer?id=${movie.id}&type=${isTv ? "tv" : "movie"}`
-      );
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || "Trailer unavailable");
-      setTrailerUrl(data.url);
-    } catch (error: any) {
-      setTrailerError(error?.message || "Trailer unavailable");
-    } finally {
-      setTrailerLoading(false);
-    }
-  };
-
-  const closeTrailer = () => {
-    setShowTrailer(false);
-    setTrailerUrl(null);
-    setTrailerError(null);
-  };
+  const movie = slides[activeIndex];
+  const title = pickTitle(movie);
+  const imagePath = pickImage(movie);
 
   return (
     <section className="relative h-[65vh] w-full overflow-hidden bg-neutral-900">
@@ -86,95 +60,41 @@ export default function HeroBanner({ movies = [] }: Props) {
         <span className="bg-red-600 text-xs px-3 py-1 rounded-full uppercase">
           Trending
         </span>
-        <Heading level={1} className="mt-3">
+        <h1 className="mt-3 text-4xl md:text-5xl font-black tracking-tight">
           {title}
-        </Heading>
+        </h1>
         <div className="flex gap-3">
           <button
             title={`Play ${title}`}
+            onClick={() => setPreviewMovie(movie)}
             className="bg-white text-black px-5 py-2 rounded-md cursor-pointer"
           >
             Play
           </button>
           <button
             title={`Watch the trailer for ${title}`}
-            onClick={fetchTrailer}
+            onClick={() => setPreviewMovie(movie)}
             className="bg-gray-700 text-white px-5 py-2 rounded-md cursor-pointer"
           >
-            {trailerLoading ? "Loading..." : "Watch Trailer"}
+            Watch Trailer
           </button>
         </div>
-        {trailerError ? (
-          <p className="text-sm text-red-300">{trailerError}</p>
-        ) : null}
       </div>
 
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2">
         {slides.map((_, i) => (
           <button
             key={i}
-            onClick={() => setIndex(i)}
+            onClick={() => setActiveIndex(i)}
             title={`Jump to slide ${i + 1}`}
             className={`h-0.5 transition-all duration-300 rounded-full ${
-              i === index ? "w-6 bg-red-600" : "w-3 bg-white/40"
+              i === activeIndex ? "w-6 bg-red-600" : "w-3 bg-white/40"
             }`}
           />
         ))}
       </div>
 
-      {showTrailer ? (
-        <div
-          className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center px-4"
-          onClick={closeTrailer}
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-4xl overflow-hidden rounded-xl bg-neutral-900 border border-white/15 shadow-2xl"
-          >
-            <div
-              className={`relative bg-neutral-800 ${
-                trailerUrl ? "aspect-video" : "h-64"
-              }`}
-            >
-              {trailerUrl ? (
-                <iframe
-                  title="Trailer player"
-                  src={`${trailerUrl}?autoplay=1`}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="h-full w-full"
-                />
-              ) : imagePath ? (
-                <Image
-                  src={`${IMG_BASE}${imagePath}`}
-                  alt={title}
-                  fill
-                  sizes="100vw"
-                  className="object-cover"
-                />
-              ) : null}
-
-              <button
-                onClick={closeTrailer}
-                className="absolute top-3 right-3 rounded-full bg-black/70 px-3 py-1 text-sm"
-                title="Close trailer"
-              >
-                ✕
-              </button>
-            </div>
-
-            <div className="p-4 space-y-2">
-              <Heading level={3}>{title}</Heading>
-              {trailerError ? (
-                <p className="text-sm text-red-300">{trailerError}</p>
-              ) : null}
-              {!trailerUrl && trailerLoading ? (
-                <p className="text-sm text-gray-300">Loading trailer…</p>
-              ) : null}
-            </div>
-          </div>
-        </div>
-      ) : null}
+      <MoviePreview movie={previewMovie} onClose={() => setPreviewMovie(null)} />
     </section>
   );
 }

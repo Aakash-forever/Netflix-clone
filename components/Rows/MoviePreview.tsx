@@ -1,55 +1,31 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { Movie } from "@/lib/tmdb";
 import { useMyList } from "@/hooks/useMyList";
-import Heading from "../UI/Heading";
+import WatchTrailerButton from "./WatchTrailerButton";
 
 type Props = {
   movie: Movie | null;
   onClose: () => void;
 };
 
-const isTv = (item: Movie) => {
-  if (item.media_type) return item.media_type === "tv";
-  return Boolean(item.first_air_date && !item.title);
-};
-
 export default function MoviePreview({ movie, onClose }: Props) {
   const [trailerUrl, setTrailerUrl] = useState<string | null>(null);
-  const [trailerLoading, setTrailerLoading] = useState(false);
   const [trailerError, setTrailerError] = useState<string | null>(null);
+  const [hideActions, setHideActions] = useState(false);
   const { isSaved, toggle, hydrated } = useMyList();
-
-  useEffect(() => {
-    setTrailerUrl(null);
-    setTrailerError(null);
-    setTrailerLoading(false);
-  }, [movie?.id]);
 
   if (!movie) return null;
 
-  const watchTrailer = async () => {
-    setTrailerLoading(true);
-    setTrailerError(null);
-    try {
-      const type = isTv(movie) ? "tv" : "movie";
-      const res = await fetch(`/api/trailer?id=${movie.id}&type=${type}`);
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || "Trailer unavailable");
-      setTrailerUrl(data.url);
-    } catch (error: any) {
-      setTrailerError(error?.message || "Trailer unavailable");
-    } finally {
-      setTrailerLoading(false);
-    }
-  };
+  const previewKey = movie.id ?? movie.title ?? "preview";
 
   const title = movie.title || movie.name || "Untitled";
 
   return (
     <div
+      key={previewKey}
       onClick={onClose}
       className="fixed inset-0 z-40 flex items-center justify-center bg-black/60 px-4"
     >
@@ -92,17 +68,15 @@ export default function MoviePreview({ movie, onClose }: Props) {
         </div>
 
         <div className="p-5 space-y-3">
-          <Heading
-            level={3}
-            addon={
-              <>
-                {movie.release_date || movie.first_air_date || "Unknown date"}
-                {movie.vote_average ? ` · ⭐ ${movie.vote_average.toFixed(1)}` : ""}
-              </>
-            }
-          >
-            {title}
-          </Heading>
+          <div className="flex items-baseline gap-2">
+            <h3 className="text-xl md:text-2xl font-semibold text-white">
+              {title}
+            </h3>
+            <span className="text-sm text-gray-400">
+              {movie.release_date || movie.first_air_date || "Unknown date"}
+              {movie.vote_average ? ` · ⭐ ${movie.vote_average.toFixed(1)}` : ""}
+            </span>
+          </div>
 
           <p className="text-sm text-gray-200">
             {movie.overview || "No description available."}
@@ -112,19 +86,19 @@ export default function MoviePreview({ movie, onClose }: Props) {
             <div className="text-sm text-red-400">{trailerError}</div>
           ) : null}
 
-          <div className="flex gap-3 pt-1">
-            <button
-              onClick={watchTrailer}
-              disabled={trailerLoading}
-              title={`Watch the trailer for ${title}`}
-              className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium hover:bg-red-500 disabled:opacity-60"
-            >
-              {trailerLoading
-                ? "Loading..."
-                : trailerUrl
-                  ? "Replay Trailer"
-                  : "Watch Trailer"}
-            </button>
+          {!hideActions ? (
+            <div className="flex gap-3 pt-1">
+            <WatchTrailerButton
+              movie={movie}
+              title={title}
+              hasTrailer={Boolean(trailerUrl)}
+              onLoaded={(url) => {
+                setTrailerUrl(url);
+                setTrailerError(null);
+              }}
+              onError={(msg) => setTrailerError(msg)}
+              onStart={() => setHideActions(true)}
+            />
             <button
               onClick={() => toggle(movie)}
               title={
@@ -141,7 +115,8 @@ export default function MoviePreview({ movie, onClose }: Props) {
             >
               Close
             </button>
-          </div>
+            </div>
+          ) : null}
         </div>
       </div>
     </div>
