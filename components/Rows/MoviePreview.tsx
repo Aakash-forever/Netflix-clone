@@ -14,7 +14,6 @@ type Props = {
 export default function MoviePreview({ movie, onClose }: Props) {
   const [trailerUrl, setTrailerUrl] = useState<string | null>(null);
   const [trailerError, setTrailerError] = useState<string | null>(null);
-  const [hideActions, setHideActions] = useState(false);
   const { isSaved, toggle, hydrated } = useMyList();
 
   if (!movie) return null;
@@ -22,6 +21,7 @@ export default function MoviePreview({ movie, onClose }: Props) {
   const previewKey = movie.id ?? movie.title ?? "preview";
 
   const title = movie.title || movie.name || "Untitled";
+  const trailerActive = Boolean(trailerUrl);
 
   return (
     <div
@@ -86,19 +86,18 @@ export default function MoviePreview({ movie, onClose }: Props) {
             <div className="text-sm text-red-400">{trailerError}</div>
           ) : null}
 
-          {!hideActions ? (
-            <div className="flex gap-3 pt-1">
-            <WatchTrailerButton
-              movie={movie}
-              title={title}
-              hasTrailer={Boolean(trailerUrl)}
-              onLoaded={(url) => {
-                setTrailerUrl(url);
-                setTrailerError(null);
-              }}
-              onError={(msg) => setTrailerError(msg)}
-              onStart={() => setHideActions(true)}
-            />
+          <div className="flex gap-3 pt-1">
+            {!trailerActive ? (
+              <WatchTrailerButton
+                movie={movie}
+                title={title}
+                onLoaded={(url) => {
+                  setTrailerUrl(url);
+                  setTrailerError(null);
+                }}
+                onError={(msg) => setTrailerError(msg)}
+              />
+            ) : null}
             <button
               onClick={() => toggle(movie)}
               title={
@@ -115,8 +114,7 @@ export default function MoviePreview({ movie, onClose }: Props) {
             >
               Close
             </button>
-            </div>
-          ) : null}
+          </div>
         </div>
       </div>
     </div>

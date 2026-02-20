@@ -5,11 +5,9 @@ import type { Movie } from "@/lib/tmdb";
 
 type Props = {
   movie: Movie;
-  hasTrailer: boolean;
   onLoaded: (url: string) => void;
   onError: (message: string) => void;
   title: string;
-  onStart?: () => void;
 };
 
 const isTv = (item: Movie) => {
@@ -19,16 +17,13 @@ const isTv = (item: Movie) => {
 
 export default function WatchTrailerButton({
   movie,
-  hasTrailer,
   onLoaded,
   onError,
   title,
-  onStart,
 }: Props) {
   const [loading, setLoading] = useState(false);
 
   const handleClick = async () => {
-    onStart?.();
     setLoading(true);
     onError("");
     try {
@@ -51,7 +46,7 @@ export default function WatchTrailerButton({
       title={`Watch the trailer for ${title}`}
       className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium hover:bg-red-500 disabled:opacity-60"
     >
-      {loading ? "Loading..." : hasTrailer ? "Replay Trailer" : "Watch Trailer"}
+      {loading ? "Loading..." : "Watch Trailer"}
     </button>
   );
 }

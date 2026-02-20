@@ -8,10 +8,17 @@ const IMG_BASE = "https://image.tmdb.org/t/p/w500";
 
 type Props = {
   movie: Movie;
+  loading?: "eager" | "lazy";
+  priority?: boolean;
   onSelect?: (movie: Movie) => void;
 };
 
-export default function MovieCard({ movie, onSelect }: Props) {
+export default function MovieCard({
+  movie,
+  loading = "lazy",
+  priority = false,
+  onSelect,
+}: Props) {
   const openDetails = () => onSelect?.(movie);
   const handleKey = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter" || e.key === " ") {
@@ -34,6 +41,8 @@ export default function MovieCard({ movie, onSelect }: Props) {
           <Image
             src={`${IMG_BASE}${movie.poster_path}`}
             alt={movie.title || movie.name || "Untitled"}
+            loading={loading}
+            priority={priority}
             fill
             className="object-cover"
             sizes="200px"

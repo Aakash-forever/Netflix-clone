@@ -49,6 +49,7 @@ export default function HeroBanner({ movies = [] }: Props) {
           alt={title}
           fill
           priority
+          loading="eager"
           sizes="100vw"
           className="object-cover object-top"
         />

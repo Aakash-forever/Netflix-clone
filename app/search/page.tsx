@@ -1,12 +1,14 @@
 "use client";
 import { useState, type ChangeEvent, type FormEvent } from "react";
-import MovieCollection from "@/components/Rows/MovieCollection";
+import MovieCard from "@/components/Rows/MovieCard";
+import MoviePreview from "@/components/Rows/MoviePreview";
 import type { Movie } from "@/lib/tmdb";
 
 export default function SearchPage() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(false);
+  const [selected, setSelected] = useState<Movie | null>(null);
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -50,7 +52,20 @@ export default function SearchPage() {
       </form>
 
       {resultsWithPosters.length > 0 ? (
-        <MovieCollection movies={resultsWithPosters} layout="grid" />
+        <>
+          <div className="grid gap-6 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 p-6">
+            {resultsWithPosters.map((movie, index) => (
+              <MovieCard
+                key={movie.id}
+                movie={movie}
+                loading={index === 0 ? "eager" : "lazy"}
+                priority={index === 0}
+                onSelect={setSelected}
+              />
+            ))}
+          </div>
+          <MoviePreview movie={selected} onClose={() => setSelected(null)} />
+        </>
       ) : (
         <p className="text-sm text-gray-400">Try searching for something.</p>
       )}

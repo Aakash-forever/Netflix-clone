@@ -1,10 +1,13 @@
 "use client";
 
-import MovieCollection from "@/components/Rows/MovieCollection";
+import { useState } from "react";
+import MovieCard from "@/components/Rows/MovieCard";
+import MoviePreview from "@/components/Rows/MoviePreview";
 import { useMyList } from "@/hooks/useMyList";
 
 export default function MyList() {
   const { items, hydrated } = useMyList();
+  const [selected, setSelected] = useState(null);
 
   if (!hydrated) {
     return <div className="p-6 text-gray-300">Loading your list…</div>;
@@ -22,7 +25,18 @@ export default function MyList() {
         </h1>
         <span className="text-sm text-gray-400">{items.length} saved</span>
       </div>
-      <MovieCollection movies={items} layout="grid" />
+      <div className="grid gap-6 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 p-6">
+        {items.map((movie, index) => (
+          <MovieCard
+            key={movie.id}
+            movie={movie}
+            loading="eager"
+            priority
+            onSelect={setSelected}
+          />
+        ))}
+      </div>
+      <MoviePreview movie={selected} onClose={() => setSelected(null)} />
     </div>
   );
 }

@@ -21,8 +21,17 @@ const loadList = (): Movie[] => {
 
 export function useMyList() {
   const latestJson = useRef("[]"); // remember last saved JSON
-  const [items, setItems] = useState<Movie[]>(loadList);
-  const [hydrated] = useState(() => typeof window !== "undefined");
+  const [items, setItems] = useState<Movie[]>([]);
+  const [hydrated, setHydrated] = useState(false);
+
+  // First load after mount; keeps server/client markup identical, then hydrate.
+  useEffect(() => {
+    const initial = loadList();
+    latestJson.current = serialize(initial);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setItems(initial);
+    setHydrated(true);
+  }, []);
 
   // Persist whenever items change (after hydration)
   useEffect(() => {
