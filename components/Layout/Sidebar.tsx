@@ -15,10 +15,6 @@ export default function Sidebar() {
                  flex flex-col items-center gap-8 py-12
                  bg-neutral-950 border-r border-white/10"
     >
-      <div className="mt-4 mb-6 text-3xl font-black text-red-600 drop-shadow-[0_4px_12px_rgba(255,0,0,0.35)]">
-        N
-      </div>
-
       <div className="flex flex-col items-center justify-center flex-1 gap-12 w-full">
         {[
           { href: "/", Icon: Home, label: "Home" },

@@ -9,9 +9,10 @@ import WatchTrailerButton from "./WatchTrailerButton";
 type Props = {
   movie: Movie | null;
   onClose: () => void;
+  size?: "default" | "compact";
 };
 
-export default function MoviePreview({ movie, onClose }: Props) {
+export default function MoviePreview({ movie, onClose, size = "default" }: Props) {
   const [trailerUrl, setTrailerUrl] = useState<string | null>(null);
   const [trailerError, setTrailerError] = useState<string | null>(null);
   const { isSaved, toggle, hydrated } = useMyList();
@@ -23,19 +24,31 @@ export default function MoviePreview({ movie, onClose }: Props) {
   const title = movie.title || movie.name || "Untitled";
   const trailerActive = Boolean(trailerUrl);
 
+  const isCompact = size === "compact";
+
   return (
     <div
       key={previewKey}
       onClick={onClose}
-      className="fixed inset-0 z-40 flex items-center justify-center bg-black/60 px-4"
+      className="fixed inset-0 z-40 flex items-center justify-center bg-black/75 px-3 py-6 sm:px-4 sm:py-10"
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-3xl rounded-xl bg-neutral-900 border border-white/10 shadow-2xl overflow-hidden"
+        className={`flex flex-col overflow-hidden rounded-xl border border-white/10 bg-neutral-900 shadow-2xl max-h-[90vh] ${
+          isCompact
+            ? "w-[88vw] max-w-[360px] sm:max-w-[430px]"
+            : "w-full max-w-3xl"
+        }`}
       >
         <div
-          className={`relative bg-neutral-800 ${
-            trailerUrl ? "aspect-video" : "h-72"
+          className={`relative flex-shrink-0 bg-neutral-800 ${
+            trailerUrl
+              ? isCompact
+                ? "aspect-[16/10]"
+                : "aspect-video"
+              : isCompact
+              ? "h-52 sm:h-60"
+              : "h-60 sm:h-72"
           }`}
         >
           {trailerUrl ? (
@@ -61,15 +74,15 @@ export default function MoviePreview({ movie, onClose }: Props) {
           <button
             onClick={onClose}
             title="Close details"
-            className="absolute top-3 right-3 rounded-full bg-black/60 px-3 py-1 text-sm"
+            className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-black/70 text-sm hover:bg-black/80"
           >
             ✕
           </button>
         </div>
 
-        <div className="p-5 space-y-3">
-          <div className="flex items-baseline gap-2">
-            <h3 className="text-xl md:text-2xl font-semibold text-white">
+        <div className="flex-1 space-y-3 overflow-y-auto p-4 sm:p-5">
+          <div className="flex flex-wrap items-baseline gap-2">
+            <h3 className="text-lg font-semibold text-white sm:text-xl md:text-2xl">
               {title}
             </h3>
             <span className="text-sm text-gray-400">
@@ -86,7 +99,7 @@ export default function MoviePreview({ movie, onClose }: Props) {
             <div className="text-sm text-red-400">{trailerError}</div>
           ) : null}
 
-          <div className="flex gap-3 pt-1">
+          <div className="flex flex-wrap gap-3 pt-1">
             {!trailerActive ? (
               <WatchTrailerButton
                 movie={movie}
