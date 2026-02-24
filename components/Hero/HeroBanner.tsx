@@ -51,11 +51,11 @@ export default function HeroBanner({ movies = [] }: Props) {
           priority
           loading="eager"
           sizes="100vw"
-          className="object-cover object-top"
+          className="object-cover object-center md:object-top"
         />
       ) : null}
 
-      <div className="absolute inset-0 bg-linear-to-r from-black via-black/75 to-transparent" />
+      <div className="absolute inset-0 bg-linear-to-r from-black/80 via-black/50 to-transparent" />
 
       <div className="absolute left-4 top-4 hidden md:block md:left-6 md:top-6">
         <span className="text-xl font-black uppercase tracking-[0.25rem] text-red-600 drop-shadow-[0_4px_12px_rgba(255,0,0,0.35)] sm:text-2xl">
@@ -67,7 +67,7 @@ export default function HeroBanner({ movies = [] }: Props) {
         <span className="inline-block rounded-full bg-red-600 px-3 py-1 text-[11px] uppercase tracking-wide">
           Trending
         </span>
-        <h1 className="mt-1 max-w-2xl text-3xl font-black leading-tight tracking-tight sm:text-4xl md:text-5xl">
+        <h1 className="mt-1 max-w-[90vw] text-2xl font-black leading-tight tracking-tight sm:max-w-2xl sm:text-3xl md:text-5xl">
           {title}
         </h1>
         <div className="flex flex-wrap gap-2 sm:gap-3">

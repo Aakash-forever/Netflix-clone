@@ -17,6 +17,18 @@ body {
   color: var(--foreground);
 }
 
+/* Make interactive elements show pointer cursor */
+button,
+[role="button"],
+a,
+label,
+summary,
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+  cursor: pointer;
+}
+
 
 html,
 body {

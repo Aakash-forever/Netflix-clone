@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Movie } from "@/lib/tmdb";
 import { useMyList } from "@/hooks/useMyList";
 import WatchTrailerButton from "./WatchTrailerButton";
@@ -16,6 +16,17 @@ export default function MoviePreview({ movie, onClose, size = "default" }: Props
   const [trailerUrl, setTrailerUrl] = useState<string | null>(null);
   const [trailerError, setTrailerError] = useState<string | null>(null);
   const { isSaved, toggle, hydrated } = useMyList();
+
+  useEffect(() => {
+    if (!movie) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [movie]);
 
   if (!movie) return null;
 
@@ -36,15 +47,15 @@ export default function MoviePreview({ movie, onClose, size = "default" }: Props
         onClick={(e) => e.stopPropagation()}
         className={`flex flex-col overflow-hidden rounded-xl border border-white/10 bg-neutral-900 shadow-2xl max-h-[90vh] ${
           isCompact
-            ? "w-[88vw] max-w-[360px] sm:max-w-[430px]"
+            ? "w-[88vw] max-w-90 sm:max-w-107.5"
             : "w-full max-w-3xl"
         }`}
       >
         <div
-          className={`relative flex-shrink-0 bg-neutral-800 ${
+          className={`relative shrink-0 bg-neutral-800 ${
             trailerUrl
               ? isCompact
-                ? "aspect-[16/10]"
+                ? "aspect-16/10"
                 : "aspect-video"
               : isCompact
               ? "h-52 sm:h-60"
