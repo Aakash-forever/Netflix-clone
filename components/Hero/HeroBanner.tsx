@@ -55,7 +55,7 @@ export default function HeroBanner({ movies = [] }: Props) {
         />
       ) : null}
 
-      <div className="absolute inset-0 bg-gradient-to-r from-black via-black/75 to-transparent" />
+      <div className="absolute inset-0 bg-linear-to-r from-black via-black/75 to-transparent" />
 
       <div className="absolute left-4 top-4 hidden md:block md:left-6 md:top-6">
         <span className="text-xl font-black uppercase tracking-[0.25rem] text-red-600 drop-shadow-[0_4px_12px_rgba(255,0,0,0.35)] sm:text-2xl">
