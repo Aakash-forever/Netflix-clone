@@ -47,7 +47,7 @@ export const searchMovies = async (query: string): Promise<Movie[]> => {
   if (!trimmed) return [];
 
   const { data } = await api.get<TmdbResponse>("/search/movie", {
-    params: { query: trimmed, include_adult: true },
+    params: { query: trimmed, include_adult: false },
   });
 
   return data.results;
